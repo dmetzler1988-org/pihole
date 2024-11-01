@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use App\Service\FileHandler;
+use App\Service\FileService;
 use App\Service\SortContent;
-use App\Service\ValidateUrl;
+use App\Service\UrlService;
 
-// TODO: Create a file with each URL given on pihole (done - see blocklist-updated.txt)
-// TODO: read from this file, grab content from urls and save it
 // TODO: append to other restored contents
-// TODO: remove url validation for these new urls from websites
 
 class GrabAndSumBlacklist
 {
@@ -21,32 +18,30 @@ class GrabAndSumBlacklist
 
     public function __construct()
     {
-        $fileHandler = new FileHandler($this->ignoredFiles, $this->ignoredFolders, $this->ignoredLines);
-        /*$content = [
-            "vd.emp.prd.s3.amazonaws.com",
-            "vdterms.samsungcloudsolution.com",
-            "www.etracker.de",
-            "www.google-analytics.com",
-            "www.samsungrm.net",
-            "x2.vindicosuite.com",
-            "xml.opera.com",
-            "xpu.samsungelectronics.com",
-            "ypu.samsungelectronics.com",
-            "www.google.com",
-            "chip.de",
-        ];*/
+        $fileService = new FileService($this->ignoredFiles, $this->ignoredFolders, $this->ignoredLines);
+        $urlService = new UrlService();
 
-        #$content = (new FindDuplicates())->getSingleContent();
-        #$content = (new ValidateUrl())->getValidContent($content);
-        #$content = (new SortContent())->getSortedContent($content);
+        // Get urls to grab content of blacklist file
+        $content = $fileService->getFileContent('./../blacklist/blacklist-updated.txt');
 
-        $content = $fileHandler->getMergedFiles('./../blacklist/available');
+        // TODO: (optional) validate urls for cleanup?
+
+        // Grab content from urls
+        $content = $urlService->getContentFromUrls($content);
+
+        // Save content from urls into files (for review, manual checks and backups)
+        $fileService->writeContentToFiles($content);
+
+        // Get content of each file once in $content
+        $content = $fileService->getMergedFiles('./../blacklist/available');
+
+        // Sort content
         $content = (new SortContent())->getSortedContent($content);
 
-        #$content = (new ValidateUrl())->getValidatedUrlsByHeaders($content);
-        #$content = (new ValidateUrl())->getValidatedUrlsByPing($content);
-        #$content = (new ValidateUrl())->getValidatedUrlsByCurl($content);
+        // TODO: (optional) validate urls for cleanup?
+        //$content = (new UrlService())->getValidatedUrlsByCurl($content);
 
-        $fileHandler->writeContentToFile($content);
+        // Save content into one file
+        $fileService->writeContentToFile($content, './../blacklist/mergedAvailableFiles.txt');
     }
 }

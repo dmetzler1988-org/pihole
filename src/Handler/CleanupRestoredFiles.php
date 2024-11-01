@@ -4,40 +4,32 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use App\Service\FileHandler;
+use App\Service\FileService;
 use App\Service\SortContent;
-use App\Service\ValidateUrl;
-
-// TODO: (optional) execute validator on restored files once and minimize the contents to working urls only (because its very slow)
+use App\Service\UrlService;
 
 class CleanupRestoredFiles
 {
     protected array $ignoredFiles = ['README.md', '.DS_Store'];
     protected array $ignoredFolders = ['.', '..'];
     protected array $ignoredLines = ['comments' => '/^\#/'];
-    protected FileHandler $fileHandler;
+    protected FileService $fileService;
 
     public function __construct()
     {
-        $this->fileHandler = new FileHandler($this->ignoredFiles, $this->ignoredFolders, $this->ignoredLines);
-        /*$content = [
-            "vd.emp.prd.s3.amazonaws.com",
-            "vdterms.samsungcloudsolution.com",
-            "www.etracker.de",
-            "www.google-analytics.com",
-            "www.samsungrm.net",
-            "x2.vindicosuite.com",
-            "xml.opera.com",
-            "xpu.samsungelectronics.com",
-            "ypu.samsungelectronics.com",
-            "www.google.com",
-            "chip.de",
-        ];*/
+        $this->fileService = new FileService($this->ignoredFiles, $this->ignoredFolders, $this->ignoredLines);
 
-        $content = $this->fileHandler->getMergedFiles('./../blacklist/restored');
+        // Get content of each file once in $content
+        $content = $this->fileService->getMergedFiles('./../blacklist/restored');
+
+        // Sort content
         $content = (new SortContent())->getSortedContent($content);
-        //$content = (new ValidateUrl())->getValidatedUrlsByCurl($content);
-        $this->fileHandler->writeContentToFile($content, './../blacklist/mergedRestoreFiles.txt');
+
+        // TODO: (optional) validate urls for cleanup?
+        //$content = (new UrlService())->getValidatedUrlsByCurl($content);
+
+        // Save content into one file
+        $this->fileService->writeContentToFile($content, './../blacklist/mergedRestoreFiles.txt');
     }
 }
 
