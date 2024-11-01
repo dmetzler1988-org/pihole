@@ -11,5 +11,5 @@ require '../vendor/autoload.php';
 
 // TODO: make output to csv, txt and simple echo to choose via option on run command
 
-#new CleanupRestoredFiles());
+(new CleanupRestoredFiles());
 (new GrabAndSumBlacklist());
