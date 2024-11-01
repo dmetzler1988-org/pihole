@@ -12,3 +12,7 @@ vscode/.vscode/extensions/*/*
 
 # Ignore composer
 vendor
+
+# Custom files
+mergedRestoreFiles.txt
+mergedAvailableFiles.txt
