@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use App\Service\FasterOne;
 use App\Service\FileHandler;
 use App\Service\SortContent;
 use App\Service\ValidateUrl;
@@ -14,9 +13,9 @@ use App\Service\ValidateUrl;
 // TODO: append to other restored contents
 // TODO: remove url validation for these new urls from websites
 
-class GrabAndSumAdlists
+class GrabAndSumBlacklist
 {
-    protected array $ignoredFiles = ['README.md', '.DS_Store', 'blocklist.txt'];
+    protected array $ignoredFiles = ['README.md', '.DS_Store'];
     protected array $ignoredFolders = ['.', '..'];
     protected array $ignoredLines = ['comments' => '/^\#/'];
 
@@ -41,7 +40,7 @@ class GrabAndSumAdlists
         #$content = (new ValidateUrl())->getValidContent($content);
         #$content = (new SortContent())->getSortedContent($content);
 
-        $content = $fileHandler->getMergedFiles('./../blacklists');
+        $content = $fileHandler->getMergedFiles('./../blacklist/available');
         $content = (new SortContent())->getSortedContent($content);
 
         #$content = (new ValidateUrl())->getValidatedUrlsByHeaders($content);

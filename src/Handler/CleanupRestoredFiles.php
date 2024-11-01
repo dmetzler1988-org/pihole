@@ -12,7 +12,7 @@ use App\Service\ValidateUrl;
 
 class CleanupRestoredFiles
 {
-    protected array $ignoredFiles = ['README.md', '.DS_Store', 'blocklist.txt'];
+    protected array $ignoredFiles = ['README.md', '.DS_Store'];
     protected array $ignoredFolders = ['.', '..'];
     protected array $ignoredLines = ['comments' => '/^\#/'];
     protected FileHandler $fileHandler;
@@ -34,10 +34,10 @@ class CleanupRestoredFiles
             "chip.de",
         ];*/
 
-        $content = $this->fileHandler->getMergedFiles('./../adlist/restored');
+        $content = $this->fileHandler->getMergedFiles('./../blacklist/restored');
         $content = (new SortContent())->getSortedContent($content);
         //$content = (new ValidateUrl())->getValidatedUrlsByCurl($content);
-        $this->fileHandler->writeContentToFile($content, './../adlist/mergedRestoreFiles.txt');
+        $this->fileHandler->writeContentToFile($content, './../blacklist/mergedRestoreFiles.txt');
     }
 }
 
