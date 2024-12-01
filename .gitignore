@@ -9,3 +9,10 @@
 # Ignore files from vscode and only allow package.json for infos.
 vscode/.vscode/extensions/*/*
 !vscode/.vscode/extensions/*/package.json
+
+# Ignore composer
+vendor
+
+# Custom files
+mergedRestoreFiles.txt
+mergedAvailableFiles.txt
